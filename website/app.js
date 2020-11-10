@@ -1,14 +1,13 @@
 /* Global Variables */
 let URL = "http://api.openweathermap.org/data/2.5/weather?zip="
-const apiKey = "6476141f82da5f302a7a464e6bbf9d9f"
+const apiKey = "&appid=6476141f82da5f302a7a464e6bbf9d9f"
 // Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
-//EventListner 
 
 //Async GET
-const retrieveWeatherData = async (URL, apiKey) =>{ 
-    const request = await fetch(URL + apiKey);
+const retrieveWeatherData = async (URL, zcode, apiKey) =>{ 
+    const request = await fetch(URL + zcode + apiKey);
     try {
     // Transform into JSON
     const weatherData = await request.json()
@@ -19,4 +18,28 @@ const retrieveWeatherData = async (URL, apiKey) =>{
       // appropriately handle the error
     }
   };
-  
+
+  //EventListner 
+document.getElementById('generate').addEventListener('click',performAction());
+
+function performAction(e){
+    const zipCode = document.getElementById('zip').value;
+    const comment = document.getElementById('feelings').value; 
+    if (zipCode == ''){
+        alert('Please enter a zip code');
+    }
+    else {
+        retrieveWeatherData (URL, zipCode, apiKey)
+        //Add data
+        .then(function(data){
+            postData('/feedback', {temperature: data.main.temp, date: newDate, UserResponse: comment});
+        })
+            .then(
+                updateUI()
+            )    
+
+    }
+
+
+}
+
